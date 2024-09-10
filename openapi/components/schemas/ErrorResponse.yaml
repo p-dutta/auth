@@ -1,0 +1,15 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    type: object  # You can specify the type for the data accordingly if needed
+  message:
+    type: string
+  error:
+    type: string
+required:
+  - success
+  - data
+  - message
+  - error

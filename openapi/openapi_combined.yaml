@@ -1,0 +1,227 @@
+swagger: '2.0'
+info:
+  title: Playback
+  description: APIs for playback service
+  version: 1.0.0
+schemes:
+  - https
+host: "toffee-api-gtw-3sp5x5gl1qybu.apigateway.prj-tof-app-dev.cloud.goog"
+x-google-endpoints:
+  - name: "toffee-api-gtw-3sp5x5gl1qybu.apigateway.prj-tof-app-dev.cloud.goog"
+    allowCors: True
+paths:
+  /v1/token:
+    post:
+      summary: Get Token
+      description: Endpoint to get tokens.
+      x-google-backend:
+        address: https://auth-zojtpqpcfq-as.a.run.app/v1/token
+      operationId: getTokens
+      tags:
+        - Auth
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Token request parameters
+          required: true
+          schema:
+            $ref: '#/definitions/TokenRequest'
+      responses:
+        '200':
+          description: Token granted
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        '400':
+          description: Bad request/Invalid request body
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /v1/token/refresh:
+    post:
+      summary: Refresh Token
+      description: Endpoint to refresh access tokens.
+      x-google-backend:
+        address: https://auth-zojtpqpcfq-as.a.run.app/v1/token/refresh
+      operationId: refreshToken
+      tags:
+        - Auth
+      security:
+        - BearerAuth: [ ]
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Tokens refresh successful
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        '400':
+          description: Bad request/Invalid request body
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: Unauthorized. Invalid or expired token.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Internal server error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    options:
+      operationId: corsRefresh
+      x-google-backend:
+        address: https://auth-zojtpqpcfq-as.a.run.app/v1/token/refresh
+      responses:
+        '204':
+          description: A successful preflight response
+  /v1/device/playback/{contentId}:
+    post:
+      summary: Playback request
+      x-google-backend:
+        address: https://toffee-playback-zojtpqpcfq-as.a.run.app/v1/device/playback/{contentId}
+      consumes:
+        - application/json
+      description: Handles the request for content playback based on the provided
+        content ID and playback details.
+      operationId: playback
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - description: Content ID for playback
+          in: path
+          name: contentId
+          required: true
+          type: string
+        - description: Playback request details
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: '#/definitions/PlaybackRequest'
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Successfully added signed cookie header
+          schema:
+            $ref: '#/definitions/PlaybackResponse'
+        "400":
+          description: Bad request
+          schema:
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            type: object
+    options:
+      operationId: corsplayback
+      parameters:
+        - description: Content ID for playback
+          in: path
+          name: contentId
+          required: true
+          type: string
+      x-google-backend:
+        address: https://toffee-playback-zojtpqpcfq-as.a.run.app/v1/device/playback/{contentId}
+      responses:
+        '204':
+          description: A successful preflight response
+definitions:
+  SuccessResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      data:
+        type: object
+      message:
+        type: string
+    required:
+      - success
+      - message
+      - data
+  ErrorResponse:
+    type: object
+    properties:
+      success:
+        type: boolean
+      data:
+        type: object
+      message:
+        type: string
+      error:
+        type: string
+    required:
+      - success
+      - data
+      - message
+      - error
+  TokenRequest:
+    type: object
+    properties:
+      type:
+        type: string
+        description: Type of the token request.
+      requester_id:
+        type: string
+        format: uuid
+        description: ID of the requester (UUID v4).
+      device_id:
+        type: string
+        description: ID of the device.
+      provider:
+        type: string
+        description: Provider of the token.
+      country:
+        type: string
+        description: Two letter country code.
+      access_token_exp:
+        type: integer
+        format: int64
+        description: Expiry time for the access token in seconds.
+      refresh_token_exp:
+        type: integer
+        format: int64
+        description: Expiry time for the refresh token in seconds
+    required:
+      - type
+      - requester_id
+      - device_id
+  DistributionType:
+    enum:
+      - LINEAR
+      - LIVE
+      - VOD
+    type: string
+    x-enum-varnames:
+      - LINEAR
+      - LIVE
+      - VOD
+  PlaybackRequest:
+    properties:
+      package_id:
+        type: string
+      type:
+        $ref: '#/definitions/DistributionType'
+    type: object
+  PlaybackResponse:
+    properties:
+      format:
+        type: string
+      url:
+        type: string
+    type: object
+securityDefinitions:
+  BearerAuth:
+    authorizationUrl: ""
+    flow: "implicit"
+    type: "oauth2"
+    # The value below should be unique
+    x-google-issuer: "toffeelive.com"
+    x-google-jwks_uri: "https://storage.googleapis.com/toffe-dev-public-key/jwks.json"
+    # Optional. Replace YOUR-CLIENT-ID with your client ID
+    x-google-audiences: "https://localhost:3000"

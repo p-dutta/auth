@@ -1,0 +1,38 @@
+ValidateTokenReturnData:
+  type: object
+  properties:
+    type:
+      type: string
+      description: Type of the token.
+    token:
+      type: string
+      description: The token string.
+    jti:
+      type: string
+      description: JWT ID (jti).
+    iat:
+      type: number
+      format: float
+      description: Issued At time (iat) as a Unix timestamp.
+    exp:
+      type: number
+      format: float
+      description: Expiration time (exp) as a Unix timestamp.
+    iss:
+      type: string
+      description: Issuer (iss) of the token.
+    requester_id:
+      type: string
+      description: ID of the requester.
+    device_id:
+      type: string
+      description: ID of the device.
+  required:
+    - type
+    - token
+    - jti
+    - iat
+    - exp
+    - iss
+    - requester_id
+    - device_id

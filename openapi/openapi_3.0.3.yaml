@@ -1,0 +1,419 @@
+---
+openapi: 3.0.3
+info:
+  title: Token Provider
+  description: APIs for authentication/token provider and policy management
+  version: 1.0.0
+servers:
+  - url: "https://tof-auth-dev-2hon5katgxbyq.apigateway.prj-tof-app-dev.cloud.goog"
+paths:
+  /v1/token:
+    post:
+      summary: Create Token
+      description: Endpoint to get tokens.
+      x-google-backend:
+        address: https://auth-zojtpqpcfq-as.a.run.app
+      operationId: getTokens
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: Type of the token request.
+                requester_id:
+                  type: string
+                  format: uuid
+                  description: ID of the requester (UUID v4).
+                device_id:
+                  type: string
+                  description: ID of the device.
+                at_duration:
+                  type: integer
+                  format: int64
+                  description: Expiry time for the access token in seconds.
+                rt_duration:
+                  type: integer
+                  format: int64
+                  description: Expiry time for the refresh token in seconds.
+              required:
+                - type
+                - requester_id
+                - device_id
+      responses:
+        "200":
+          description: Token granted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  message:
+                    type: string
+                required:
+                  - success
+                  - message
+                  - data
+        "400":
+          description: Bad request/Invalid request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  message:
+                    type: string
+                  error:
+                    type: string
+                required:
+                  - success
+                  - data
+                  - message
+                  - error
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  message:
+                    type: string
+                  error:
+                    type: string
+                required:
+                  - success
+                  - data
+                  - message
+                  - error
+  /v1/token/refresh:
+    post:
+      summary: Refresh Token
+      description: Endpoint to refresh access tokens.
+      x-google-backend:
+        address: https://auth-zojtpqpcfq-as.a.run.app
+      operationId: refreshToken
+      tags:
+        - Auth
+      requestBody:
+        required: false
+        content:
+          application/json: {}
+      responses:
+        "200":
+          description: Tokens refresh successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  message:
+                    type: string
+                required:
+                  - success
+                  - message
+                  - data
+        "400":
+          description: Bad request/Invalid request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  message:
+                    type: string
+                  error:
+                    type: string
+                required:
+                  - success
+                  - data
+                  - message
+                  - error
+        "401":
+          description: Unauthorized. Invalid or expired token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  message:
+                    type: string
+                  error:
+                    type: string
+                required:
+                  - success
+                  - data
+                  - message
+                  - error
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  message:
+                    type: string
+                  error:
+                    type: string
+                required:
+                  - success
+                  - data
+                  - message
+                  - error
+      security:
+        - BearerAuth: []
+  /v1/token/revoke:
+    post:
+      summary: Revoke access token
+      description: Revoke the access token using a bearer token.
+      x-google-backend:
+        address: https://auth-zojtpqpcfq-as.a.run.app
+      tags:
+        - Auth
+      operationId: revokeAccessToken
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json: {}
+      responses:
+        "200":
+          description: Token revoked successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  message:
+                    type: string
+                required:
+                  - success
+                  - message
+                  - data
+        "400":
+          description: Bad request/Invalid request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  message:
+                    type: string
+                  error:
+                    type: string
+                required:
+                  - success
+                  - data
+                  - message
+                  - error
+        "401":
+          description: Unauthorized. Invalid or expired token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  message:
+                    type: string
+                  error:
+                    type: string
+                required:
+                  - success
+                  - data
+                  - message
+                  - error
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                  message:
+                    type: string
+                  error:
+                    type: string
+                required:
+                  - success
+                  - data
+                  - message
+                  - error
+
+components:
+  schemas:
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+        message:
+          type: string
+      required:
+        - success
+        - message
+        - data
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+        message:
+          type: string
+        error:
+          type: string
+      required:
+        - success
+        - data
+        - message
+        - error
+    TokenRequest:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of the token request.
+        requester_id:
+          type: string
+          format: uuid
+          description: ID of the requester (UUID v4).
+        device_id:
+          type: string
+          description: ID of the device.
+        profile_id:
+          type: string
+          description: Profile of the requester
+        provider:
+          type: string
+          description: Token Provider
+        at_duration:
+          type: integer
+          format: int64
+          description: Expiry time for the access token in seconds.
+        rt_duration:
+          type: integer
+          format: int64
+          description: Expiry time for the refresh token in seconds.
+      required:
+        - type
+        - requester_id
+        - device_id
+        - profile_id
+        - provider
+    ValidateTokenReturnData:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of the token.
+        token:
+          type: string
+          description: The token string.
+        jti:
+          type: string
+          description: JWT ID (jti).
+        iat:
+          type: number
+          format: float
+          description: Issued At time (iat) as a Unix timestamp.
+        exp:
+          type: number
+          format: float
+          description: Expiration time (exp) as a Unix timestamp.
+        iss:
+          type: string
+          description: Issuer (iss) of the token.
+        requester_id:
+          type: string
+          description: ID of the requester.
+        device_id:
+          type: string
+          description: ID of the device.
+        profile_id:
+          type: string
+          description: Profile of the requester
+        provider:
+          type: string
+          description: Token Provider
+      required:
+        - type
+        - token
+        - jti
+        - iat
+        - exp
+        - iss
+        - requester_id
+        - device_id
+        - profile_id
+        - provider
+    ValidateTokenSuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+        message:
+          type: string
+      required:
+        - success
+        - message
+        - data
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer

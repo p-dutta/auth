@@ -1,0 +1,18 @@
+FROM golang:latest
+
+# Enviroment variable
+WORKDIR /usr/src/auth
+
+RUN go install github.com/air-verse/air@latest
+
+#Copying files to work directory
+COPY .env.example .env
+COPY go.mod ./
+RUN go mod download && go mod verify
+COPY . .
+
+ENV TZ=Asia/Dhaka
+
+# Run and expose the server on port 3000
+EXPOSE 3000
+

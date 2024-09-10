@@ -1,0 +1,15 @@
+type: object
+properties:
+  type:
+    type: string
+  at_duration:
+    type: integer
+  rt_duration:
+    type: integer
+  iss:
+    type: string
+required:
+  - type
+  - at_duration
+  - rt_duration
+  - iss

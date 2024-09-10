@@ -1,0 +1,17 @@
+type: object
+properties:
+  success:
+    type: boolean
+  data:
+    # This schema represents an empty object or any type of data
+    # Adjust the type according to your specific data structure
+    # For an empty object:
+    type: object
+    # For any type of data:
+    # type: any
+  message:
+    type: string
+required:
+  - success
+  - message
+  - data
