@@ -1,5 +1,5 @@
 # App
-Boilerplate for Go Fiber that makes use of Docker, PostgreSQL and JWT.
+An Authentication Service that follows OAuth 2.0 conventions. Make sure to generate  `public.pem` and `private.pem` files before proceeding.
 
 # Development
 ### In order to have an optimal development experience you need to have Docker installed.
